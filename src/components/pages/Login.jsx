@@ -2,25 +2,34 @@
  * Created by hao.cheng on 2017/4/16.
  */
 import React from 'react';
-import { Form, Icon, Input, Button, Checkbox } from 'antd';
+import { Form, Icon, Input, Button, Checkbox, notification} from 'antd';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { fetchData, receiveData } from '@/action';
 import { PwaInstaller } from '../widget';
+import {getUUID} from "../../utils";
+import {CAPTCHA_URL} from '../../axios/config';
 
 const FormItem = Form.Item;
 
 class Login extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            uuid: getUUID()
+        };
+    }
     componentWillMount() {
-        const { receiveData } = this.props;
-        receiveData(null, 'auth');
+        // const { receiveData } = this.props;
+        // console.log(receiveData(null, 'auth'));
+        // console.log(this.props)
     }
     componentDidUpdate(prevProps) { // React 16.3+弃用componentWillReceiveProps
         const { auth: nextAuth = {}, history } = this.props;
         // const { history } = this.props;
-        if (nextAuth.data && nextAuth.data.uid) { // 判断是否登陆
+        if (nextAuth.data && nextAuth.data.userId) { // 判断是否登陆
             localStorage.setItem('user', JSON.stringify(nextAuth.data));
-            history.push('/');
+             history.push('/');
         }
     }
     handleSubmit = (e) => {
@@ -29,14 +38,30 @@ class Login extends React.Component {
             if (!err) {
                 console.log('Received values of form: ', values);
                 const { fetchData } = this.props;
-                if (values.userName === 'admin' && values.password === 'admin') fetchData({funcName: 'admin', stateName: 'auth'});
-                if (values.userName === 'guest' && values.password === 'guest') fetchData({funcName: 'guest', stateName: 'auth'});
+                // if (values.userName === 'admin' && values.password === 'admin') fetchData({funcName: 'admin', stateName: 'auth'});
+                // if (values.userName === 'guest' && values.password === 'guest') fetchData({funcName: 'guest', stateName: 'auth'});
+                fetchData({funcName: 'login', params: {...values, uuid: this.state.uuid}}).then(res =>{
+                    console.log(res)
+                    if(res.data && res.data.code===0) {
+                        const token = res.data.token;
+                        sessionStorage.setItem("token", token);
+                        fetchData({funcName:'getMenu',params:{token}}).then(rs => {
+                            fetchData({funcName:'userInfo',params:{token}});
+                        })
+                    }else if(res.data && res.data.code && res.data.code!==0){
+                        this.refreshCaptcha();
+                        notification['error']({
+                            message:res.data.msg
+                        });
+                    }
+                });
             }
         });
     };
-    gitHub = () => {
-        window.location.href = 'https://github.com/login/oauth/authorize?client_id=792cdcd244e98dcd2dee&redirect_uri=http://localhost:3006/&scope=user&state=reactAdmin';
-    };
+    refreshCaptcha = () => {
+        const uuid = getUUID();
+        this.setState({uuid});
+    }
     render() {
         const { getFieldDecorator } = this.props.form;
         return (
@@ -48,18 +73,28 @@ class Login extends React.Component {
                     </div>
                     <Form onSubmit={this.handleSubmit} style={{maxWidth: '300px'}}>
                         <FormItem>
-                            {getFieldDecorator('userName', {
+                            {getFieldDecorator('username', {
                                 rules: [{ required: true, message: '请输入用户名!' }],
                             })(
-                                <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="管理员输入admin, 游客输入guest" />
+                                <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="账号" />
                             )}
                         </FormItem>
                         <FormItem>
                             {getFieldDecorator('password', {
                                 rules: [{ required: true, message: '请输入密码!' }],
                             })(
-                                <Input prefix={<Icon type="lock" style={{ fontSize: 13 }} />} type="password" placeholder="管理员输入admin, 游客输入guest" />
+                                <Input prefix={<Icon type="lock" style={{ fontSize: 13 }} />} type="password" placeholder="密码" />
                             )}
+                        </FormItem>
+                        <FormItem>
+                            <Input.Group >
+                                {getFieldDecorator('captcha',{
+                                    rules:[{required: true, message: '请输入验证码'}],
+                                })(
+                                    <Input style={{width:'50%'}} placeholder="验证码" />
+                                )}
+                                <img style={{width:'50%'}} onClick={this.refreshCaptcha} src={CAPTCHA_URL+this.state.uuid} alt="点击刷新" />
+                            </Input.Group>
                         </FormItem>
                         <FormItem>
                             {getFieldDecorator('remember', {
@@ -74,7 +109,6 @@ class Login extends React.Component {
                             </Button>
                             <p style={{display: 'flex', justifyContent: 'space-between'}}>
                                 <span >或 现在就去注册!</span>
-                                <span onClick={this.gitHub} ><Icon type="github" />(第三方登录)</span>
                             </p>
                         </FormItem>
                     </Form>
@@ -85,8 +119,16 @@ class Login extends React.Component {
 }
 
 const mapStateToPorps = state => {
-    const { auth } = state.httpData;
-    return { auth };
+    const defaultLogin = {data:{}};
+    const defaultGetMenu = {data:{}};
+    const defaultUserInfo = {data:{}};
+    const { login=defaultLogin,getMenu=defaultGetMenu, userInfo=defaultUserInfo} = state.httpData;
+    return { auth : {data:{
+                        ...userInfo.data.user,
+                        permissions:getMenu.data.permissions,
+                        menuList:getMenu.data.menuList}} ,
+        token:login.data.token,
+        };
 };
 const mapDispatchToProps = dispatch => ({
     fetchData: bindActionCreators(fetchData, dispatch),

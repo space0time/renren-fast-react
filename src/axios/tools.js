@@ -11,11 +11,21 @@ import { message } from 'antd';
  * @param msg       接口异常提示
  * @param headers   接口所需header配置
  */
-export const get = ({url, msg = '接口异常', headers}) =>
-    axios.get(url, headers).then(res => res.data).catch(err => {
+export const get = ({url, msg = '接口异常', headers}) => {
+    let header = {};
+    if(headers && headers.headers) {
+        header = JSON.parse(JSON.stringify(headers))
+        header.headers.token = sessionStorage.getItem('token');
+
+    }else{
+        header = headers?JSON.parse(JSON.stringify(headers)):{};
+        header.headers = {token:sessionStorage.getItem('token')}
+    }
+    return axios.get(url, header).then(res => res.data).catch(err => {
        console.log(err);
        message.warn(msg);
-    });
+    })
+};
 
 /**
  * 公用post请求
@@ -24,8 +34,17 @@ export const get = ({url, msg = '接口异常', headers}) =>
  * @param msg       接口异常提示
  * @param headers   接口所需header配置
  */
-export const post = ({url, data, msg = '接口异常', headers}) =>
-    axios.post(url, data, headers).then(res => res.data).catch(err => {
+export const post = ({url, data, msg = '接口异常', headers}) => {
+    let header = {};
+    if(headers && headers.headers) {
+        header = JSON.parse(JSON.stringify(headers))
+        header.headers.token = sessionStorage.getItem('token');
+
+    }else{
+        header.headers = {token:sessionStorage.getItem('token')}
+    }
+    return axios.post(url, data, header).then(res => res.data).catch(err => {
         console.log(err);
         message.warn(msg);
-    });
+    })
+};

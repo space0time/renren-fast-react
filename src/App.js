@@ -1,33 +1,62 @@
 import React, { Component } from 'react';
-import { Layout, notification, Icon } from 'antd';
+import { Layout } from 'antd';
 import SiderCustom from './components/SiderCustom';
 import HeaderCustom from './components/HeaderCustom';
-import { receiveData } from './action';
+import { fetchData, receiveData } from './action';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Routes from './routes';
 import { ThemePicker } from './components/widget';
+import {isURL} from "./utils";
+import routes from "./routes/config";
+import {Redirect} from "react-router-dom";
 
 const { Content, Footer } = Layout;
 
 class App extends Component {
+    static transMenu(list){
+        return list?list.map(v => {
+            let subs = null;
+            if(v.list){
+                subs = App.transMenu(v.list);
+            }
+            let rs = {key: '/app/' + v.url, title: v.name, icon: v.icon};
+            if(subs){
+                rs.subs = subs;
+            }
+            if(isURL(v.url)){
+                rs.url = v.url;
+                rs.route = '/app/' + v.menuId;
+            }
+            return rs;
+        }):null;
+    }
     state = {
         collapsed: false,
     };
     componentWillMount() {
-        const { receiveData } = this.props;
+        const { receiveData, fetchData } = this.props;
         const user = JSON.parse(localStorage.getItem('user'));
-        user && receiveData(user, 'auth');
+        if(user) {
+            const menuList = user.menuList;
+            const menus = App.transMenu(menuList);
+            const newMenu = menus?menus.concat(routes.menus):[];
+            user.menuList = newMenu;
+            receiveData(user, 'auth');
+        }
+        const token = sessionStorage.getItem("token");
+        fetchData({funcName:'getMenu',params:{token}});
+
+        // user && receiveData(user, 'auth');
         // receiveData({a: 213}, 'auth');
         // fetchData({funcName: 'admin', stateName: 'auth'});
         this.getClientWidth();
         window.onresize = () => {
-            console.log('屏幕变化了');
             this.getClientWidth();
         }
     }
     componentDidMount() {
-        const openNotification = () => {
+        /*const openNotification = () => {
             notification.open({
               message: '博主-yezihaohao',
               description: (
@@ -46,12 +75,11 @@ class App extends Component {
             localStorage.setItem('isFirst', JSON.stringify(true));
         };
         const isFirst = JSON.parse(localStorage.getItem('isFirst'));
-        !isFirst && openNotification();
+        !isFirst && openNotification();*/
     }
     getClientWidth = () => { // 获取当前浏览器宽度并设置responsive管理响应式
         const { receiveData } = this.props;
         const clientWidth = window.innerWidth;
-        console.log(clientWidth);
         receiveData({isMobile: clientWidth <= 992}, 'responsive');
     };
     toggle = () => {
@@ -61,9 +89,15 @@ class App extends Component {
     };
     render() {
         const { auth, responsive } = this.props;
+
+        const token = sessionStorage.getItem("token");
+        if(!token){
+            return <Redirect to={'/login'} />;
+        }
+
         return (
             <Layout>
-                {!responsive.data.isMobile && <SiderCustom collapsed={this.state.collapsed} />}
+                {!responsive.data.isMobile && <SiderCustom collapsed={this.state.collapsed} auth={auth} />}
                 <ThemePicker />
                 <Layout style={{flexDirection: 'column'}}>
                     <HeaderCustom toggle={this.toggle} collapsed={this.state.collapsed} user={auth.data || {}} />
@@ -74,7 +108,7 @@ class App extends Component {
                     React-Admin ©{new Date().getFullYear()} Created by 865470087@qq.com
                     </Footer>
                 </Layout>
-                
+
                 {/* {
                     responsive.data.isMobile && (   // 手机端对滚动很慢的处理
                         <style>
@@ -92,10 +126,18 @@ class App extends Component {
 }
 
 const mapStateToProps = state => {
-    const { auth = {data: {}}, responsive = {data: {}} } = state.httpData;
-    return {auth, responsive};
+    const { auth = {data: {}}, responsive = {data: {}} ,getMenu = {data: {}}} = state.httpData;
+
+    const menus = App.transMenu(getMenu.data.menuList);
+    if(menus) {
+        const newMenu = menus?menus.concat(routes.menus):[];
+        auth.data.menuList = newMenu;
+    }
+
+    return {auth, responsive, menuList:getMenu.data.menuList};
 };
 const mapDispatchToProps = dispatch => ({
+    fetchData: bindActionCreators(fetchData, dispatch),
     receiveData: bindActionCreators(receiveData, dispatch)
 });
 

@@ -1,11 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import * as serviceWorker from './serviceWorker';
+// import * as serviceWorker from './serviceWorker';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware ,compose } from 'redux';
 import reducer from './reducer';
 import { AppContainer } from 'react-hot-loader';
+import { LocaleProvider } from 'antd';
+import zh_CN from 'antd/lib/locale-provider/zh_CN';
 import Page from './Page';
 import './style/lib/animate.css';
 import './style/antd/index.less';
@@ -13,8 +15,13 @@ import './style/index.less';
 
 // redux 注入操作
 const middleware = [thunk];
-const store = createStore(reducer, applyMiddleware(...middleware));
-console.log(store.getState());
+// const store = createStore(reducer, applyMiddleware(...middleware));
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const store = createStore(reducer,composeEnhancers(
+    applyMiddleware(...middleware)
+));
+
+// console.log(store.getState());
 
 
 // const render = Component => { // 增加react-hot-loader保持状态刷新操作，如果不需要可去掉并把下面注释的打开
@@ -53,7 +60,9 @@ console.log(store.getState());
 ReactDOM.render(
     <AppContainer>
         <Provider store={store}>
-            <Page store={store} />
+            <LocaleProvider locale={zh_CN}>
+                <Page store={store} />
+            </LocaleProvider>
         </Provider>
     </AppContainer>
  ,
@@ -63,4 +72,4 @@ ReactDOM.render(
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: http://bit.ly/CRA-PWA
 // serviceWorker.unregister();
-serviceWorker.register();
+// serviceWorker.register();

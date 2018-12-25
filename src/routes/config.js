@@ -1,5 +1,17 @@
 export default {
     menus: [ // 菜单相关路由
+        /*{   key:'/app/sys', title: '系统管理', icon: 'setting',
+            subs:[
+                { key:'/app/sys/user', title: '管理员列表', url:'http://localhost:8080/renren-fast/druid/index.html'},
+                { key:'/app/sys/role', title: '角色管理', url:'http://localhost:8080/renren-fast/druid/datasource.html'},
+                { key:'/app/sys/menu', title: '菜单管理', url:'http://www.baidu.com'},
+                { key:'/app/sys/sql', title: 'SQL监控', url:'http://localhost:8080/renren-fast/druid/sql.html'},
+                { key:'/app/job/schedule', title: '定时任务', url:'http://localhost:8080/renren-fast/druid/wall.html'},
+                { key:'/app/sys/config', title: '参数管理', url:'http://localhost:8080/renren-fast/druid/webapp.html'},
+                { key:'/app/oss/oss', title: '文件上传', url:'http://localhost:8080/renren-fast/druid/weburi.html'},
+                { key:'/app/sys/log', title: '系统日志', url:'http://localhost:8080/renren-fast/druid/websession.html'}
+            ]
+        },*/
         { key: '/app/dashboard/index', title: '首页', icon: 'mobile', component: 'Dashboard' },
         {
             key: '/app/ui', title: 'UI', icon: 'scan',

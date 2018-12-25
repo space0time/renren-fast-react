@@ -4,13 +4,12 @@
 import React, { Component } from 'react';
 import { Layout } from 'antd';
 import { withRouter } from 'react-router-dom';
-import routes from '../routes/config';
 import SiderMenu from './SiderMenu';
 
 const { Sider } = Layout;
 
 class SiderCustom extends Component {
-    static getDerivedStateFromProps (props, state) { 
+    static getDerivedStateFromProps (props, state) {
         if (props.collapsed !== state.collapsed) {
             const state1 = SiderCustom.setMenuOpen(props);
             const state2 = SiderCustom.onCollapse(props.collapsed);
@@ -31,7 +30,6 @@ class SiderCustom extends Component {
         };
     };
     static onCollapse = (collapsed) => {
-        console.log(collapsed);
         return {
             collapsed,
             // firstHide: collapsed,
@@ -43,7 +41,7 @@ class SiderCustom extends Component {
         mode: 'inline',
         openKey: '',
         selectedKey: '',
-        firstHide: true, // 点击收缩菜单，第一次隐藏展开子菜单，openMenu时恢复
+        firstHide: false, // 点击收缩菜单，第一次隐藏展开子菜单，openMenu时恢复
     };
     componentDidMount() {
         // this.setMenuOpen(this.props);
@@ -54,18 +52,17 @@ class SiderCustom extends Component {
         this.setState({
             selectedKey: e.key
         });
-        console.log(this.state);
         const { popoverHide } = this.props; // 响应式布局控制小屏幕点击菜单时隐藏菜单操作
         popoverHide && popoverHide();
     };
     openMenu = v => {
-        console.log(v);
         this.setState({
             openKey: v[v.length - 1],
             firstHide: false,
         })
     };
     render() {
+        const { menuList } = this.props.auth.data;
         return (
             <Sider
                 trigger={null}
@@ -75,7 +72,7 @@ class SiderCustom extends Component {
             >
                 <div className="logo" />
                 <SiderMenu
-                    menus={routes.menus}
+                    menus={menuList}
                     onClick={this.menuClick}
                     mode="inline"
                     selectedKeys={[this.state.selectedKey]}
