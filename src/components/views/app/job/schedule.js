@@ -6,6 +6,7 @@ import JobAddOrUpdate from "./JobAddOrUpdate";
 import ScheduleLogList from "./scheduleLogList"
 import {get, post} from '@/axios/tools'
 import {SERVER_URL} from '@/axios/config'
+import {isAuth} from '@/utils'
 
 class schedule extends Component {
     state = {
@@ -111,11 +112,21 @@ class schedule extends Component {
             width: 100,
             render: (text, record) => (
                 <span>
+                    {isAuth('sys:schedule:update') &&(
                     <Button size={"small"} type="primary" onClick={()=>this.editJob(record)}>修改</Button>
+                    )}
+                    {isAuth('sys:schedule:delete') &&(
                     <Button size={"small"} type="danger" onClick={()=>this.deleteJob(record.jobId)}>删除</Button>
+                    )}
+                    {isAuth('sys:schedule:pause') &&(
                     <Button size={"small"} type="danger" onClick={()=>this.pauseJob(record.jobId)}>暂停</Button>
+                    )}
+                    {isAuth('sys:schedule:resume') &&(
                     <Button size={"small"} type="danger" onClick={()=>this.resumeJob(record.jobId)}>恢复</Button>
+                    )}
+                    {isAuth('sys:schedule:run') &&(
                     <Button size={"small"} type="danger" onClick={()=>this.runJob(record.jobId)}>立即执行</Button>
+                    )}
                 </span>
             )
         }]
@@ -310,32 +321,44 @@ class schedule extends Component {
                                            onPressEnter={() => this.start()}
                                     />
                                     <Button type="default" onClick={()=>this.start()} >查询</Button>
+                                    {isAuth('sys:schedule:save') &&(
                                     <Button type="primary" onClick={this.addJob}>新增</Button>
+                                    )}
+                                    {isAuth('sys:schedule:delete') &&(
                                     <Button type="danger"
                                             disabled={this.state.selectedRowKeys.length === 0}
                                             onClick={()=>this.deleteJob()}
                                     >
                                         批量删除
                                     </Button>
+                                    )}
+                                    {isAuth('sys:schedule:pause') &&(
                                     <Button type="danger"
                                             disabled={this.state.selectedRowKeys.length === 0}
                                             onClick={()=>this.pauseJob()}
                                     >
                                         批量暂停
                                     </Button>
+                                    )}
+                                    {isAuth('sys:schedule:resume') &&(
                                     <Button type="danger"
                                             disabled={this.state.selectedRowKeys.length === 0}
                                             onClick={()=>this.resumeJob()}
                                     >
                                         批量恢复
                                     </Button>
+                                    )}
+                                    {isAuth('sys:schedule:run') &&(
                                     <Button type="danger"
                                             disabled={this.state.selectedRowKeys.length === 0}
                                             onClick={()=>this.runJob()}
                                     >
                                         批量立即执行
                                     </Button>
+                                    )}
+                                    {isAuth('sys:schedule:log') &&(
                                     <Button type="warning" onClick={this.logList}>日志列表</Button>
+                                    )}
                                 </div>
                                 <Table rowSelection={rowSelection}
                                        columns={this.getColumn()}

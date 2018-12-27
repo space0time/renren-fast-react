@@ -62,7 +62,7 @@ class SiderCustom extends Component {
         })
     };
     render() {
-        const { menuList } = this.props.auth.data;
+        const { menuList } = this.props;
         return (
             <Sider
                 trigger={null}

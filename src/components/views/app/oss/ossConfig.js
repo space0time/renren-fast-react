@@ -225,7 +225,7 @@ class OssConfig extends Component {
                                 )}
                             </FromItem>
                         </div>
-                        <div  hidden={this.isHidden(type,3)}>
+                        <div hidden={this.isHidden(type,3)}>
                             <FromItem
                                 {...formItemLayout}
                                 label={"域名"}

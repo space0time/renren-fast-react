@@ -5,6 +5,7 @@ import BreadcrumbCustom from "../../../BreadcrumbCustom";
 import ConfigAddOrUpdate from './configAddOrUpdate'
 import {get, post} from '@/axios/tools'
 import {SERVER_URL} from '@/axios/config'
+import {isAuth} from '@/utils'
 
 class Config extends Component {
 
@@ -92,8 +93,12 @@ class Config extends Component {
             width: 100,
             render: (text, record) => (
                 <span>
+                    {isAuth('sys:config:update') &&(
                     <Button size={"small"} type="primary" onClick={()=>this.editConfig(record)}>修改</Button>
+                    )}
+                    {isAuth('sys:config:delete') &&(
                     <Button size={"small"} type="danger" onClick={()=>this.deleteConfig(record)}>删除</Button>
+                    )}
                 </span>
             )
         }]
@@ -230,13 +235,17 @@ class Config extends Component {
                                            onPressEnter={() => this.start()}
                                     />
                                     <Button type="default" onClick={()=>this.start()} >查询</Button>
+                                    {isAuth('sys:config:save') &&(
                                     <Button type="primary" onClick={this.addConfig}>新增</Button>
+                                    )}
+                                    {isAuth('sys:config:delete') &&(
                                     <Button type="danger"
                                             disabled={this.state.selectedRowKeys.length === 0}
                                             onClick={this.deleteConfigs}
                                     >
                                         批量删除
                                     </Button>
+                                    )}
                                 </div>
                                 <Table rowSelection={rowSelection}
                                        columns={this.getColumn()}

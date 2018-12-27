@@ -58,9 +58,11 @@ class HeaderCustom extends Component {
             title:'提示',
             content: '确认退出吗?',
             onOk:()=>{
-                localStorage.removeItem('user');
+                sessionStorage.removeItem('user');
+                sessionStorage.removeItem('permissions');
+                sessionStorage.removeItem('menuList');
                 sessionStorage.removeItem('token');
-                this.props.history.push('/login')
+                this.props.history.push('/login');
             }
         });
     };

@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {Button, Card, Col, Input, Modal, notification, Row, Table, Tag} from "antd";
 import {get} from '@/axios/tools'
 import {SERVER_URL} from '@/axios/config'
+import {isAuth} from '@/utils'
 
 class scheduleLogList extends Component{
 
@@ -18,7 +19,7 @@ class scheduleLogList extends Component{
     }
 
     componentDidMount(){
-        this.start();
+        isAuth('sys:schedule:log') && this.start();
     }
 
     jobIdInput = (e)=>{

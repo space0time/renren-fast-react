@@ -37,7 +37,7 @@ class RoleAddOrUpdate extends Component {
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 values.roleId=roleId;
-                values.menuIdList = this.state.selectedKeys;
+                values.menuIdList = this.state.selectedKeys.checked;
                 console.log('Received values of form: ', values);
                 post({url:SERVER_URL+`/sys/role/${!roleId ? 'save' : 'update'}`,
                     data:values
@@ -136,6 +136,7 @@ class RoleAddOrUpdate extends Component {
                                 checkable
                                 defaultExpandAll={defaultExpandAll}
                                 checkedKeys={this.state.selectedKeys}
+                                checkStrictly
                                 onCheck={this.onCheck}
                             >
                                 {this.renderTreeNodes(this.state.treeData)}

@@ -5,6 +5,7 @@ import {Redirect} from "react-router-dom";
 import UserAddOrUpdate from "./userAddOrUpdate";
 import {get, post} from '@/axios/tools'
 import {SERVER_URL} from '@/axios/config'
+import {isAuth} from '@/utils'
 
 class sysUser extends Component {
     state = {
@@ -113,8 +114,12 @@ class sysUser extends Component {
             width: 100,
             render: (text, record) => (
                 <span>
+                    {isAuth('sys:user:update') &&(
                     <Button size={"small"} type="primary" onClick={()=>this.editUser(record)}>修改</Button>
+                    )}
+                    {isAuth('sys:user:delete') &&(
                     <Button size={"small"} type="danger" onClick={()=>this.deleteUser(record)}>删除</Button>
+                    )}
                 </span>
             )
         }]
@@ -256,13 +261,17 @@ class sysUser extends Component {
                                            onPressEnter={() => this.start()}
                                     />
                                     <Button type="default" onClick={()=>this.start()} >查询</Button>
-                                    <Button type="primary" onClick={this.addUser}>新增</Button>
-                                    <Button type="danger"
-                                            disabled={this.state.selectedRowKeys.length === 0}
-                                            onClick={this.deleteUsers}
-                                    >
-                                        批量删除
-                                    </Button>
+                                    {isAuth('sys:user:save') &&(
+                                        <Button type="primary" onClick={this.addUser}>新增</Button>
+                                    )}
+                                    {isAuth('sys:user:delete') &&(
+                                        <Button type="danger"
+                                                disabled={this.state.selectedRowKeys.length === 0}
+                                                onClick={this.deleteUsers}
+                                        >
+                                            批量删除
+                                        </Button>
+                                    )}
                                 </div>
                                 <Table rowSelection={rowSelection}
                                        columns={this.getColumn()}

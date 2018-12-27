@@ -4,6 +4,7 @@ import { get, post } from '@/axios/tools'
 import {SERVER_URL} from '@/axios/config'
 import { treeDataTranslate } from '@/utils'
 import './iconSelect.less'
+import {isAuth} from '@/utils'
 
 const FromItem = Form.Item;
 
@@ -15,12 +16,14 @@ class MenuAddOrUpdate extends Component{
     }
 
     componentDidMount(){
+        isAuth('sys:menu:select') &&(
         get({url:SERVER_URL+'/sys/menu/select'}).then(res => {
             const data = treeDataTranslate(res.menuList, 'menuId');
             this.setState({
                 treeData: data,
             })
-        });
+        })
+        )
 
     }
     handleOk = ()=>{

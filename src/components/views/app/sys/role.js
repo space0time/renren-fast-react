@@ -5,6 +5,7 @@ import {get, post} from '@/axios/tools'
 import {SERVER_URL} from '@/axios/config'
 import {Redirect} from "react-router-dom";
 import RoleAddOrUpdate from "./roleAddOrUpdate"
+import {isAuth} from '@/utils'
 
 class sysRole extends Component {
 
@@ -97,8 +98,12 @@ class sysRole extends Component {
             width: 100,
             render: (text, record) => (
                 <span>
+                    {isAuth('sys:role:update') &&(
                     <Button size={"small"} type="primary" onClick={()=>this.editRole(record)}>修改</Button>
+                    )}
+                    {isAuth('sys:role:delete') &&(
                     <Button size={"small"} type="danger" onClick={()=>this.deleteRole(record)}>删除</Button>
+                    )}
                 </span>
             )
         }]
@@ -235,13 +240,17 @@ class sysRole extends Component {
                                            onPressEnter={() => this.start()}
                                     />
                                     <Button type="default" onClick={()=>this.start()} >查询</Button>
+                                    {isAuth('sys:role:save') &&(
                                     <Button type="primary" onClick={this.addRole}>新增</Button>
+                                    )}
+                                    {isAuth('sys:role:delete') &&(
                                     <Button type="danger"
                                             disabled={this.state.selectedRowKeys.length === 0}
                                             onClick={this.deleteRoles}
                                     >
                                         批量删除
                                     </Button>
+                                    )}
                                 </div>
                                 <Table rowSelection={rowSelection}
                                        columns={this.getColumn()}

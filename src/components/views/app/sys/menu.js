@@ -5,6 +5,7 @@ import { get, post } from '@/axios/tools'
 import {SERVER_URL} from '@/axios/config'
 import { treeDataTranslate } from '@/utils'
 import MenuAddOrUpdate from './menuAddOrUpdate'
+import {isAuth} from '@/utils'
 
 class Menu extends Component {
 
@@ -89,8 +90,12 @@ class Menu extends Component {
             render: (text, record)=>{
                 return (
                     <span>
+                        {isAuth('sys:menu:update') &&(
                         <Button size={"small"} type="primary" onClick={()=>this.updateMenu(record)}>修改</Button>
+                        )}
+                        {isAuth('sys:menu:delete') &&(
                         <Button size={"small"} type="danger" onClick={()=>this.deleteMenu(record)}>删除</Button>
+                        )}
                     </span>
                 )
             }
@@ -164,7 +169,9 @@ class Menu extends Component {
                         <div className="gutter-box">
                             <Card title="" bordered={false}>
                                 <div style={{ marginBottom: 16 }}>
+                                    {isAuth('sys:menu:save') &&(
                                     <Button type="primary" onClick={this.add}>新增</Button>
+                                    )}
                                 </div>
                                 <Table columns={this.getColumns()}
                                        dataSource={this.state.treeData}

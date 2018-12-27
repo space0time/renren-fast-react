@@ -36,13 +36,13 @@ class App extends Component {
     };
     componentWillMount() {
         const { receiveData, fetchData } = this.props;
-        const user = JSON.parse(localStorage.getItem('user'));
+        const user = JSON.parse(sessionStorage.getItem('user'));
         if(user) {
             const menuList = user.menuList;
             const menus = App.transMenu(menuList);
             const newMenu = menus?menus.concat(routes.menus):[];
             user.menuList = newMenu;
-            receiveData(user, 'auth');
+            receiveData(user, 'user');
         }
         const token = sessionStorage.getItem("token");
         fetchData({funcName:'getMenu',params:{token}});
@@ -56,26 +56,11 @@ class App extends Component {
         }
     }
     componentDidMount() {
-        /*const openNotification = () => {
-            notification.open({
-              message: '博主-yezihaohao',
-              description: (
-                  <div>
-                      <p>
-                          GitHub地址： <a href="https://github.com/yezihaohao" target="_blank" rel="noopener noreferrer">https://github.com/yezihaohao</a>
-                      </p>
-                      <p>
-                          博客地址： <a href="https://yezihaohao.github.io/" target="_blank" rel="noopener noreferrer">https://yezihaohao.github.io/</a>
-                      </p>
-                  </div>
-              ),
-              icon: <Icon type="smile-circle" style={{ color: 'red' }} />,
-              duration: 0,
-            });
-            localStorage.setItem('isFirst', JSON.stringify(true));
-        };
-        const isFirst = JSON.parse(localStorage.getItem('isFirst'));
-        !isFirst && openNotification();*/
+
+    }
+    componentWillReceiveProps(nextProps){
+        nextProps.permissions && sessionStorage.setItem('permissions', JSON.stringify(nextProps.permissions));
+        nextProps.menuList && sessionStorage.setItem('menuList', JSON.stringify(nextProps.menuList));
     }
     getClientWidth = () => { // 获取当前浏览器宽度并设置responsive管理响应式
         const { receiveData } = this.props;
@@ -88,7 +73,7 @@ class App extends Component {
         });
     };
     render() {
-        const { auth, responsive } = this.props;
+        const { user, responsive, menuList, permissions} = this.props;
 
         const token = sessionStorage.getItem("token");
         if(!token){
@@ -97,12 +82,12 @@ class App extends Component {
 
         return (
             <Layout>
-                {!responsive.data.isMobile && <SiderCustom collapsed={this.state.collapsed} auth={auth} />}
+                {!responsive.data.isMobile && <SiderCustom collapsed={this.state.collapsed} menuList={menuList} />}
                 <ThemePicker />
                 <Layout style={{flexDirection: 'column'}}>
-                    <HeaderCustom toggle={this.toggle} collapsed={this.state.collapsed} user={auth.data || {}} />
+                    <HeaderCustom toggle={this.toggle} collapsed={this.state.collapsed} user={user || {}} />
                     <Content style={{ margin: '0 16px', overflow: 'initial', flex: '1 1 0' }}>
-                        <Routes auth={auth} />
+                        <Routes menuList={menuList} permissions={permissions} />
                     </Content>
                     <Footer style={{ textAlign: 'center' }}>
                     React-Admin ©{new Date().getFullYear()} Created by 865470087@qq.com
@@ -126,15 +111,15 @@ class App extends Component {
 }
 
 const mapStateToProps = state => {
-    const { auth = {data: {}}, responsive = {data: {}} ,getMenu = {data: {}}} = state.httpData;
+    const { user = {data: {}}, responsive = {data: {}} ,getMenu = {data: {}}} = state.httpData;
 
     const menus = App.transMenu(getMenu.data.menuList);
     if(menus) {
         const newMenu = menus?menus.concat(routes.menus):[];
-        auth.data.menuList = newMenu;
+        user.data.menuList = newMenu;
     }
 
-    return {auth, responsive, menuList:getMenu.data.menuList};
+    return {user, responsive, menuList:user.data.menuList, permissions:getMenu.data.permissions};
 };
 const mapDispatchToProps = dispatch => ({
     fetchData: bindActionCreators(fetchData, dispatch),

@@ -28,7 +28,7 @@ class Login extends React.Component {
         const { auth: nextAuth = {}, history } = this.props;
         // const { history } = this.props;
         if (nextAuth.data && nextAuth.data.userId) { // 判断是否登陆
-            localStorage.setItem('user', JSON.stringify(nextAuth.data));
+            sessionStorage.setItem('user', JSON.stringify(nextAuth.data));
              history.push('/');
         }
     }
@@ -41,11 +41,12 @@ class Login extends React.Component {
                 // if (values.userName === 'admin' && values.password === 'admin') fetchData({funcName: 'admin', stateName: 'auth'});
                 // if (values.userName === 'guest' && values.password === 'guest') fetchData({funcName: 'guest', stateName: 'auth'});
                 fetchData({funcName: 'login', params: {...values, uuid: this.state.uuid}}).then(res =>{
-                    console.log(res)
                     if(res.data && res.data.code===0) {
                         const token = res.data.token;
                         sessionStorage.setItem("token", token);
                         fetchData({funcName:'getMenu',params:{token}}).then(rs => {
+                            sessionStorage.setItem('permissions',JSON.stringify(rs.data.permissions));
+                            sessionStorage.setItem('menuList',JSON.stringify(rs.data.menuList));
                             fetchData({funcName:'userInfo',params:{token}});
                         })
                     }else if(res.data && res.data.code && res.data.code!==0){
