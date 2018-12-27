@@ -1,16 +1,14 @@
 /**
  * Created by hao.cheng on 2017/4/13.
  */
-import React, { Component } from 'react';
-import {Menu, Icon, Layout, Badge, Popover, Modal} from 'antd';
+import React, {Component} from 'react';
+import {Badge, Icon, Layout, Menu, Modal, Popover} from 'antd';
 import screenfull from 'screenfull';
-import { gitOauthToken, gitOauthInfo } from '../axios';
-import { queryString } from '../utils';
 import avater from '../style/imgs/b1.jpg';
 import SiderCustom from './SiderCustom';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
-import { PwaInstaller } from './widget';
+import {connect} from 'react-redux';
+import {withRouter} from 'react-router-dom';
+import {PwaInstaller} from './widget';
 import ModifyPassword from './ModifyPassword'
 
 const { Header } = Layout;
