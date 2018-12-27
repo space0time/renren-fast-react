@@ -24,23 +24,16 @@ class HeaderCustom extends Component {
         mpVisible: false,
     };
     componentDidMount() {
-        const QueryString = queryString();
-        const _user = JSON.parse(localStorage.getItem('user')) || '测试';
-        if (!_user && QueryString.hasOwnProperty('code')) {
-            gitOauthToken(QueryString.code).then(res => {
-                gitOauthInfo(res.access_token).then(info => {
-                    this.setState({
-                        user: info
-                    });
-                    localStorage.setItem('user', JSON.stringify(info));
-                });
-            });
-        } else {
-            this.setState({
-                user: _user
-            });
-        }
+        /*const _user = JSON.parse(sessionStorage.getItem('user'));
+        this.setState({
+            user: _user
+        });*/
     };
+    componentWillReceiveProps(nextProps){
+        this.setState({
+            user:nextProps.user,
+        });
+    }
     screenFull = () => {
         if (screenfull.enabled) {
             screenfull.request();
@@ -80,7 +73,7 @@ class HeaderCustom extends Component {
     };
 
     render() {
-        const { responsive, path } = this.props;
+        const { responsive, path, user } = this.props;
         return (
             <Header className="custom-theme header" >
                 {
@@ -114,7 +107,7 @@ class HeaderCustom extends Component {
                     </Menu.Item>
                     <SubMenu title={<span className="avatar"><img src={avater} alt="头像" /><i className="on bottom b-white" /></span>}>
                         <MenuItemGroup title="用户中心">
-                            <Menu.Item key="setting:1">你好 - {this.props.user.username}</Menu.Item>
+                            <Menu.Item key="setting:1">你好 - {user.username}</Menu.Item>
                             <Menu.Item key="setting:2">修改密码</Menu.Item>
                             <Menu.Item key="logout"><span >退出登录</span></Menu.Item>
                         </MenuItemGroup>

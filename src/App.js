@@ -85,7 +85,7 @@ class App extends Component {
                 {!responsive.data.isMobile && <SiderCustom collapsed={this.state.collapsed} menuList={menuList} />}
                 <ThemePicker />
                 <Layout style={{flexDirection: 'column'}}>
-                    <HeaderCustom toggle={this.toggle} collapsed={this.state.collapsed} user={user || {}} />
+                    <HeaderCustom toggle={this.toggle} collapsed={this.state.collapsed} user={user.data || {}} />
                     <Content style={{ margin: '0 16px', overflow: 'initial', flex: '1 1 0' }}>
                         <Routes menuList={menuList} permissions={permissions} />
                     </Content>
