@@ -22,13 +22,15 @@ export default class CRouter extends Component {
     }
 
     requireAuth = (permission, component) => {
-        const { permissions } = this.props;
+        // const { permissions } = this.props;
+        const permissions = JSON.parse(sessionStorage.getItem('permissions'));
         // const { auth } = store.getState().httpData;
         if (!permissions || !permissions.includes(permission)) return <Redirect to={'404'} />;
         return component;
     };
     requireLogin = (component, permission) => {
-        const { permissions } = this.props;
+        //const { permissions } = this.props;
+        const permissions = JSON.parse(sessionStorage.getItem('permissions'));
         if (process.env.NODE_ENV === 'production' && !permissions) { // 线上环境判断是否登录
             return <Redirect to={'/login'} />;
         }
