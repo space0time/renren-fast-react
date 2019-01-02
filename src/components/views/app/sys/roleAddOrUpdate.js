@@ -12,7 +12,7 @@ class RoleAddOrUpdate extends Component {
 
     state = {
         treeData:[],
-        checkedKeys:[],
+        checkedKeys:{checked:[]},
     }
 
     componentDidMount(){
@@ -27,7 +27,7 @@ class RoleAddOrUpdate extends Component {
 
     componentWillReceiveProps(nextProps){
         this.setState({
-            checkedKeys:nextProps.roleData.menuIdList
+            checkedKeys:{checked:nextProps.roleData.menuIdList?nextProps.roleData.menuIdList:[]}
         })
     }
 
@@ -82,7 +82,6 @@ class RoleAddOrUpdate extends Component {
         }
         return rs;
     }
-
     onCheck = (checkedKeys, e) => {
         const {checked, node} = e;
         if(checked && !node.isLeaf()){
@@ -97,6 +96,34 @@ class RoleAddOrUpdate extends Component {
 
 
     }
+
+    onSelect = (selectedKeys, e)=>{
+        const {node} = e;
+        const checkedKeys = JSON.parse(JSON.stringify(this.state.checkedKeys));
+
+        checkedKeys.checked = checkedKeys.checked.map(i=>i+'');
+        if(checkedKeys.checked.includes(node.props.eventKey)){
+            if(node.isLeaf()) {
+                checkedKeys.checked = checkedKeys.checked.filter(i=> i!==node.props.eventKey)
+            }else {
+                const childKeys = this.childKeys(node, true);
+                childKeys.push(node.props.eventKey);
+                checkedKeys.checked = checkedKeys.checked.filter(i => !childKeys.includes(i));
+            }
+        }else {
+            if(node.isLeaf()) {
+                checkedKeys.checked.push(node.props.eventKey);
+            }else {
+                const childKeys = this.childKeys(node, true);
+                childKeys.push(node.props.eventKey);
+                checkedKeys.checked = checkedKeys.checked.concat(childKeys);
+            }
+        }
+        this.setState({
+            checkedKeys
+        })
+    }
+
 
 
     render() {
@@ -154,12 +181,14 @@ class RoleAddOrUpdate extends Component {
                         {...formItemLayout}
                         label="授权"
                     >
-                        {this.state.treeData.length? <Tree
+                        {this.state.treeData.length?
+                            <Tree
                                 checkable
                                 defaultExpandAll={defaultExpandAll}
                                 checkedKeys={this.state.checkedKeys}
                                 checkStrictly
                                 onCheck={this.onCheck}
+                                onSelect={this.onSelect}
                             >
                                 {this.renderTreeNodes(this.state.treeData)}
                             </Tree>: 'loading tree'}
