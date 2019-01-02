@@ -12,13 +12,12 @@ class RoleAddOrUpdate extends Component {
 
     state = {
         treeData:[],
-        selectedKeys:[],
+        checkedKeys:[],
     }
 
     componentDidMount(){
         get({url:SERVER_URL+'/sys/menu/list'}).then(res => {
             const data = treeDataTranslate(res, 'menuId');
-            console.log(data);
             this.setState({
                 treeData: data,
             })
@@ -28,7 +27,7 @@ class RoleAddOrUpdate extends Component {
 
     componentWillReceiveProps(nextProps){
         this.setState({
-            selectedKeys:nextProps.roleData.menuIdList
+            checkedKeys:nextProps.roleData.menuIdList
         })
     }
 
@@ -37,7 +36,7 @@ class RoleAddOrUpdate extends Component {
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 values.roleId=roleId;
-                values.menuIdList = this.state.selectedKeys.checked;
+                values.menuIdList = this.state.checkedKeys.checked;
                 console.log('Received values of form: ', values);
                 post({url:SERVER_URL+`/sys/role/${!roleId ? 'save' : 'update'}`,
                     data:values
@@ -69,12 +68,35 @@ class RoleAddOrUpdate extends Component {
         return <TreeNode {...item} dataRef={item} />;
     })
 
-    onCheck = selectedKeys => {
-        this.setState({
-            selectedKeys
-        });
+    childKeys = (node, root) => {
+        let rs = []
+        if(!root && !node.props.children){
+            rs = [node.key];
+        }else if(node.props.children){
+            node.props.children.forEach(e=>{
+                rs.push(e.key);
+                if(e.props.children){
+                    rs = rs.concat(this.childKeys(e, false));
+                }
+            })
+        }
+        return rs;
     }
 
+    onCheck = (checkedKeys, e) => {
+        const {checked, node} = e;
+        if(checked && !node.isLeaf()){
+            checkedKeys.checked = checkedKeys.checked.concat(this.childKeys(node, true));
+        }else if(!checked && !node.isLeaf()){
+            const childKeys = this.childKeys(node, true);
+            checkedKeys.checked = checkedKeys.checked.filter(i => !childKeys.includes(i));
+        }
+        this.setState({
+            checkedKeys
+        });
+
+
+    }
 
 
     render() {
@@ -132,15 +154,15 @@ class RoleAddOrUpdate extends Component {
                         {...formItemLayout}
                         label="授权"
                     >
-                            <Tree
+                        {this.state.treeData.length? <Tree
                                 checkable
                                 defaultExpandAll={defaultExpandAll}
-                                checkedKeys={this.state.selectedKeys}
+                                checkedKeys={this.state.checkedKeys}
                                 checkStrictly
                                 onCheck={this.onCheck}
                             >
                                 {this.renderTreeNodes(this.state.treeData)}
-                            </Tree>
+                            </Tree>: 'loading tree'}
                     </FormItem>
                 </Form>
             </Modal>

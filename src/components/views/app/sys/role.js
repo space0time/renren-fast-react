@@ -157,7 +157,6 @@ class sysRole extends Component {
      * 编辑角色
      */
     editRole = (record) => {
-        console.log(record);
         get({url:SERVER_URL+`/sys/role/info/${record.roleId}`}).then(res => {
             if(res.code === 0){
                 this.setState({
