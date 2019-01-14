@@ -1,13 +1,28 @@
 import React, {Component} from 'react'
-import {Checkbox, Form, Input, Modal, Radio} from "antd";
-import { post } from '@/axios/tools'
+import {Checkbox, Form, Input, Modal, Radio, TreeSelect} from "antd";
+import { get,post } from '@/axios/tools'
 import {SERVER_URL} from '@/axios/config'
+import {isAuth, treeDataTranslate } from '@/utils'
+
 
 const FormItem = Form.Item;
 
 class UserAddOrUpdate extends Component {
     state = {
+        treeData:[],
         confirmDirty: false
+    }
+
+    componentDidMount(){
+        isAuth('sys:dept:select') &&(
+            get({url:SERVER_URL+'/sys/dept/select'}).then(res => {
+                const data = treeDataTranslate(res.deptList, 'deptId');
+                this.setState({
+                    treeData: data,
+                })
+            })
+        )
+
     }
 
     handleOk = ()=>{
@@ -93,6 +108,19 @@ class UserAddOrUpdate extends Component {
                     </FormItem>
                     <FormItem
                         {...formItemLayout}
+                        label="姓名"
+                        hasFeedback
+                    >
+                        {getFieldDecorator('name', {
+                            rules: [{
+                                required: true, message: '请输入姓名!',
+                            }],
+                        })(
+                            <Input />
+                        )}
+                    </FormItem>
+                    <FormItem
+                        {...formItemLayout}
                         label="密码"
                         hasFeedback
                     >
@@ -119,6 +147,22 @@ class UserAddOrUpdate extends Component {
                             }],
                         })(
                             <Input type="password" onBlur={this.handleConfirmBlur} />
+                        )}
+                    </FormItem>
+                    <FormItem
+                        {...formItemLayout}
+                        label="所属部门"
+                    >
+                        {getFieldDecorator('deptId', {
+                            rules: [{
+                                required: true, message: '请选择所属部门!',
+                            }],
+                        })(
+                            <TreeSelect
+                                dropdownStyle={{ maxHeight: 500, overflow: 'auto' }}
+                                treeData={this.state.treeData}
+                                placeholder="请选择所属部门"
+                            />
                         )}
                     </FormItem>
                     <FormItem

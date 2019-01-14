@@ -4,7 +4,7 @@ import { get, post } from '@/axios/tools'
 import {SERVER_URL} from '@/axios/config'
 import {isAuth, treeDataTranslate } from '@/utils'
 
-const FromItem = Form.Item;
+const FormItem = Form.Item;
 
 class DeptAddOrUpdate extends Component {
 
@@ -72,7 +72,7 @@ class DeptAddOrUpdate extends Component {
             >
                 <Form>
 
-                    <FromItem
+                    <FormItem
                         {...formItemLayout}
                         label="部门名称"
                         hasFeedback
@@ -84,8 +84,8 @@ class DeptAddOrUpdate extends Component {
                         })(
                             <Input placeholder="部门名称" />
                         )}
-                    </FromItem>
-                    <FromItem
+                    </FormItem>
+                    <FormItem
                         {...formItemLayout}
                         label="上级部门"
                     >
@@ -100,8 +100,8 @@ class DeptAddOrUpdate extends Component {
                                 placeholder="请选择上级部门"
                             />
                         )}
-                    </FromItem>
-                    <FromItem
+                    </FormItem>
+                    <FormItem
                         {...formItemLayout}
                         label="排序号"
                         hasFeedback
@@ -113,7 +113,7 @@ class DeptAddOrUpdate extends Component {
                         })(
                             <InputNumber min={0} />
                         )}
-                    </FromItem>
+                    </FormItem>
                 </Form>
 
             </Modal>

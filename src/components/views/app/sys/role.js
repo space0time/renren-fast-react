@@ -85,6 +85,10 @@ class sysRole extends Component {
             dataIndex: 'roleName',
             width: 80
         }, {
+            title: '所属部门',
+            dataIndex: 'deptName',
+            width: 80
+        }, {
             title: '备注',
             dataIndex: 'remark',
             width: 80

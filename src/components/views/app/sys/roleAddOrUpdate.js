@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import { Form, Input, Modal, Tree } from "antd";
+import {Form, Input, Modal, Tree, TreeSelect, Row, Col} from "antd";
 import { get, post } from '@/axios/tools'
 import {SERVER_URL} from '@/axios/config'
-import { treeDataTranslate } from '@/utils'
+import {isAuth, treeDataTranslate } from '@/utils'
 
 const FormItem = Form.Item;
 const { TreeNode } = Tree;
@@ -13,6 +13,9 @@ class RoleAddOrUpdate extends Component {
     state = {
         treeData:[],
         checkedKeys:{checked:[]},
+        roleTreeData:[],
+        deptTreeData:[],
+        deptCheckedKeys:{checked:[]},
     }
 
     componentDidMount(){
@@ -22,12 +25,29 @@ class RoleAddOrUpdate extends Component {
                 treeData: data,
             })
         });
+        get({url:SERVER_URL+'/sys/dept/list'}).then(res => {
+            const data = treeDataTranslate(res, 'deptId');
+            this.setState({
+                deptTreeData: data,
+                roleTreeData: data,
+            })
+        });
+
+        /*isAuth('sys:dept:select') &&(
+            get({url:SERVER_URL+'/sys/dept/select'}).then(res => {
+                const data = treeDataTranslate(res.deptList, 'deptId');
+                this.setState({
+                    roleTreeData: data,
+                })
+            })
+        )*/
 
     }
 
     componentWillReceiveProps(nextProps){
         this.setState({
-            checkedKeys:{checked:nextProps.roleData.menuIdList?nextProps.roleData.menuIdList:[]}
+            checkedKeys:{checked:nextProps.roleData.menuIdList?nextProps.roleData.menuIdList:[]},
+            deptCheckedKeys:{checked:nextProps.roleData.deptIdList?nextProps.roleData.deptIdList:[]},
         })
     }
 
@@ -37,6 +57,7 @@ class RoleAddOrUpdate extends Component {
             if (!err) {
                 values.roleId=roleId;
                 values.menuIdList = this.state.checkedKeys.checked;
+                values.deptIdList = this.state.deptCheckedKeys.checked;
                 console.log('Received values of form: ', values);
                 post({url:SERVER_URL+`/sys/role/${!roleId ? 'save' : 'update'}`,
                     data:values
@@ -124,7 +145,47 @@ class RoleAddOrUpdate extends Component {
         })
     }
 
+    onDeptCheck = (deptCheckedKeys, e) => {
+        const {checked, node} = e;
+        if(checked && !node.isLeaf()){
+            deptCheckedKeys.checked = deptCheckedKeys.checked.concat(this.childKeys(node, true));
+        }else if(!checked && !node.isLeaf()){
+            const childKeys = this.childKeys(node, true);
+            deptCheckedKeys.checked = deptCheckedKeys.checked.filter(i => !childKeys.includes(i));
+        }
+        this.setState({
+            deptCheckedKeys
+        });
 
+
+    }
+
+    onDeptSelect = (selectedKeys, e)=>{
+        const {node} = e;
+        const deptCheckedKeys = JSON.parse(JSON.stringify(this.state.deptCheckedKeys));
+
+        deptCheckedKeys.checked = deptCheckedKeys.checked.map(i=>i+'');
+        if(deptCheckedKeys.checked.includes(node.props.eventKey)){
+            if(node.isLeaf()) {
+                deptCheckedKeys.checked = deptCheckedKeys.checked.filter(i=> i!==node.props.eventKey)
+            }else {
+                const childKeys = this.childKeys(node, true);
+                childKeys.push(node.props.eventKey);
+                deptCheckedKeys.checked = deptCheckedKeys.checked.filter(i => !childKeys.includes(i));
+            }
+        }else {
+            if(node.isLeaf()) {
+                deptCheckedKeys.checked.push(node.props.eventKey);
+            }else {
+                const childKeys = this.childKeys(node, true);
+                childKeys.push(node.props.eventKey);
+                deptCheckedKeys.checked = deptCheckedKeys.checked.concat(childKeys);
+            }
+        }
+        this.setState({
+            deptCheckedKeys
+        })
+    }
 
     render() {
 
@@ -139,6 +200,16 @@ class RoleAddOrUpdate extends Component {
             wrapperCol: {
                 xs: { span: 24 },
                 sm: { span: 14 },
+            },
+        };
+        const treeLayout = {
+            labelCol: {
+                xs: { span: 24 },
+                sm: { span: 24, pull:14 },
+            },
+            wrapperCol: {
+                xs: { span: 24 },
+                sm: { span: 14 , offset:4},
             },
         };
         const defaultExpandAll = true;
@@ -166,6 +237,22 @@ class RoleAddOrUpdate extends Component {
                     </FormItem>
                     <FormItem
                         {...formItemLayout}
+                        label="所属部门"
+                    >
+                        {getFieldDecorator('deptId', {
+                            rules: [{
+                                required: true, message: '请选择所属部门!',
+                            }],
+                        })(
+                            <TreeSelect
+                                dropdownStyle={{ maxHeight: 500, overflow: 'auto' }}
+                                treeData={this.state.roleTreeData}
+                                placeholder="请选择所属部门"
+                            />
+                        )}
+                    </FormItem>
+                    <FormItem
+                        {...formItemLayout}
                         label="备注"
                         hasFeedback
                     >
@@ -177,22 +264,44 @@ class RoleAddOrUpdate extends Component {
                             <Input />
                         )}
                     </FormItem>
-                    <FormItem
-                        {...formItemLayout}
-                        label="授权"
-                    >
-                        {this.state.treeData.length?
-                            <Tree
-                                checkable
-                                defaultExpandAll={defaultExpandAll}
-                                checkedKeys={this.state.checkedKeys}
-                                checkStrictly
-                                onCheck={this.onCheck}
-                                onSelect={this.onSelect}
+                    <Row>
+                        <Col span={12}>
+                            <FormItem
+                                {...treeLayout}
+                                label="功能权限"
                             >
-                                {this.renderTreeNodes(this.state.treeData)}
-                            </Tree>: 'loading tree'}
-                    </FormItem>
+                                {this.state.treeData.length?
+                                    <Tree
+                                        checkable
+                                        defaultExpandAll={defaultExpandAll}
+                                        checkedKeys={this.state.checkedKeys}
+                                        checkStrictly
+                                        onCheck={this.onCheck}
+                                        onSelect={this.onSelect}
+                                    >
+                                        {this.renderTreeNodes(this.state.treeData)}
+                                    </Tree>: 'loading tree'}
+                            </FormItem>
+                        </Col>
+                        <Col span={12}>
+                            <FormItem
+                                {...treeLayout}
+                                label="数据权限"
+                            >
+                                {this.state.deptTreeData.length?
+                                    <Tree
+                                        checkable
+                                        defaultExpandAll={defaultExpandAll}
+                                        checkedKeys={this.state.deptCheckedKeys}
+                                        checkStrictly
+                                        onCheck={this.onDeptCheck}
+                                        onSelect={this.onDeptSelect}
+                                    >
+                                        {this.renderTreeNodes(this.state.deptTreeData)}
+                                    </Tree>: 'loading tree'}
+                            </FormItem>
+                        </Col>
+                    </Row>
                 </Form>
             </Modal>
         )

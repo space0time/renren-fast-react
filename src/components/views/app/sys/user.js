@@ -88,6 +88,14 @@ class sysUser extends Component {
             dataIndex: 'username',
             width: 80
         }, {
+            title: '姓名',
+            dataIndex: 'name',
+            width: 80
+        }, {
+            title: '所属部门',
+            dataIndex: 'deptName',
+            width: 80
+        }, {
             title: '邮箱',
             dataIndex: 'email',
             width: 80

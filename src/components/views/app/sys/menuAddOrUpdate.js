@@ -6,7 +6,7 @@ import { treeDataTranslate } from '@/utils'
 import './iconSelect.less'
 import {isAuth} from '@/utils'
 
-const FromItem = Form.Item;
+const FormItem = Form.Item;
 
 class MenuAddOrUpdate extends Component{
 
@@ -111,7 +111,7 @@ class MenuAddOrUpdate extends Component{
             >
                 <Form>
 
-                    <FromItem
+                    <FormItem
                         {...formItemLayout}
                         label="类型"
                     >
@@ -126,9 +126,9 @@ class MenuAddOrUpdate extends Component{
                                 <Radio value={2}>按钮</Radio>
                             </Radio.Group>
                         )}
-                    </FromItem>
+                    </FormItem>
 
-                    <FromItem
+                    <FormItem
                         {...formItemLayout}
                         label={label}
                         hasFeedback
@@ -140,8 +140,8 @@ class MenuAddOrUpdate extends Component{
                         })(
                             <Input placeholder={label} />
                         )}
-                    </FromItem>
-                    <FromItem
+                    </FormItem>
+                    <FormItem
                         {...formItemLayout}
                         label="上级菜单"
                     >
@@ -156,9 +156,9 @@ class MenuAddOrUpdate extends Component{
                                 placeholder="请选择上级菜单"
                             />
                         )}
-                    </FromItem>
+                    </FormItem>
                     {type === 1 && (
-                    <FromItem
+                    <FormItem
                         {...formItemLayout}
                         label="菜单路由"
                         hasFeedback
@@ -170,20 +170,20 @@ class MenuAddOrUpdate extends Component{
                         })(
                             <Input placeholder="菜单路由" />
                         )}
-                    </FromItem>
+                    </FormItem>
                     )}
                     {(type === 1 || type===2) && (
-                    <FromItem
+                    <FormItem
                         {...formItemLayout}
                         label="授权标识"
                     >
                         {getFieldDecorator('perms')(
                             <Input placeholder={'多个用逗号分隔, 如: user:list,user:create'} />
                         )}
-                    </FromItem>
+                    </FormItem>
                     )}
                     {(type === 1 || type===0) && (
-                    <FromItem
+                    <FormItem
                         {...formItemLayout}
                         label="排序号"
                         hasFeedback
@@ -195,10 +195,10 @@ class MenuAddOrUpdate extends Component{
                         })(
                             <InputNumber min={0} />
                         )}
-                    </FromItem>
+                    </FormItem>
                     )}
                     {(type === 1 || type===0) && (
-                    <FromItem
+                    <FormItem
                         {...formItemLayout}
                         label="菜单图标"
                     >
@@ -207,7 +207,7 @@ class MenuAddOrUpdate extends Component{
                                 <Input />
                             )}
                         </Popover>
-                    </FromItem>
+                    </FormItem>
                     )}
                 </Form>
 
