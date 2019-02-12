@@ -14,9 +14,9 @@ class UserAddOrUpdate extends Component {
     }
 
     componentDidMount(){
-        isAuth('sys:dept:select') &&(
-            get({url:SERVER_URL+'/sys/dept/select'}).then(res => {
-                const data = treeDataTranslate(res.deptList, 'deptId');
+        isAuth('sys:dept:list') &&(
+            get({url:SERVER_URL+'/sys/dept/list'}).then(res => {
+                const data = treeDataTranslate(res, 'deptId');
                 this.setState({
                     treeData: data,
                 })

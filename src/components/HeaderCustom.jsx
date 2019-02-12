@@ -92,9 +92,9 @@ class HeaderCustom extends Component {
                     style={{ lineHeight: '64px', float: 'right' }}
                     onClick={this.menuClick}
                 >
-                    <Menu.Item key="pwa">
+                    {/*<Menu.Item key="pwa">
                         <PwaInstaller />
-                    </Menu.Item>
+                    </Menu.Item>*/}
                     <Menu.Item key="full" onClick={this.screenFull} >
                         <Icon type="arrows-alt" onClick={this.screenFull} />
                     </Menu.Item>

@@ -58,6 +58,7 @@ class MenuAddOrUpdate extends Component{
         const icons = ['setting',
             'user',
             'team',
+            'solution',
             'menu',
             'database',
             'clock-circle',
