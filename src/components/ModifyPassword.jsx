@@ -15,7 +15,7 @@ class ModifyPassword extends Component {
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
-                post({url:SERVER_URL+`/sys/user/password`,
+                post({url:`/sys/user/password`,
                     data:values
                 }).then(res =>{
                     console.log(res);

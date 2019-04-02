@@ -18,7 +18,6 @@ class Log extends Component {
             data: [],//数据
         },
         key: '',//查询条件
-        needLogin: false,
     }
 
     componentDidMount(){
@@ -34,15 +33,12 @@ class Log extends Component {
         this.setState({ loading: true });
         const limit = num?num:this.state.queryInfo.pageSize;
 
-        get({url:SERVER_URL + '/sys/log/list',
+        get({url: '/sys/log/list',
             headers:{params:{page: page, limit: limit, key: this.state.key}}}).then(res => {
             const {code, msg, page} = res;
             if(code !== 0){
                 notification['error']({
                     message:msg
-                });
-                this.setState({
-                    needLogin: true
                 });
                 return ;
             }
@@ -121,11 +117,6 @@ class Log extends Component {
 
 
     render(){
-
-        const { needLogin } = this.state;
-        if(needLogin){
-            return <Redirect to="/login" />
-        }
 
         return (
 

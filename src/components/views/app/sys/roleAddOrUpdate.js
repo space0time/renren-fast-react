@@ -19,13 +19,13 @@ class RoleAddOrUpdate extends Component {
     }
 
     componentDidMount(){
-        get({url:SERVER_URL+'/sys/menu/list'}).then(res => {
+        get({url:'/sys/menu/list'}).then(res => {
             const data = treeDataTranslate(res, 'menuId');
             this.setState({
                 treeData: data,
             })
         });
-        get({url:SERVER_URL+'/sys/dept/list'}).then(res => {
+        get({url:'/sys/dept/list'}).then(res => {
             const data = treeDataTranslate(res, 'deptId');
             this.setState({
                 deptTreeData: data,
@@ -34,7 +34,7 @@ class RoleAddOrUpdate extends Component {
         });
 
         /*isAuth('sys:dept:select') &&(
-            get({url:SERVER_URL+'/sys/dept/select'}).then(res => {
+            get({url:'/sys/dept/select'}).then(res => {
                 const data = treeDataTranslate(res.deptList, 'deptId');
                 this.setState({
                     roleTreeData: data,
@@ -59,7 +59,7 @@ class RoleAddOrUpdate extends Component {
                 values.menuIdList = this.state.checkedKeys.checked;
                 values.deptIdList = this.state.deptCheckedKeys.checked;
                 console.log('Received values of form: ', values);
-                post({url:SERVER_URL+`/sys/role/${!roleId ? 'save' : 'update'}`,
+                post({url:`/sys/role/${!roleId ? 'save' : 'update'}`,
                     data:values
                 }).then(res =>{
                     if(res.code === 0) {

@@ -20,7 +20,6 @@ class UsergroupUser extends Component {
             data: [],//数据
         },
         userName: '',//查询条件
-        needLogin: false,
         showModal: false,
         editUgId: null,
         usergroupData: {},
@@ -43,15 +42,12 @@ class UsergroupUser extends Component {
         this.setState({ selectedRowKeys: [],loading: true });
         const limit = num?num:this.state.queryInfo.pageSize;
 
-        get({url:SERVER_URL + '/sys/usergroup/ugUser/list',
+        get({url: '/sys/usergroup/ugUser/list',
             headers:{params:{page: page, limit: limit,ugId: this.props.match.params.ugId, username: this.state.userName}}}).then(res => {
             const {code, msg, page} = res;
             if(code !== 0){
                 notification['error']({
                     message:msg
-                });
-                this.setState({
-                    needLogin: true
                 });
                 return ;
             }
@@ -111,7 +107,7 @@ class UsergroupUser extends Component {
     }
 
     editUsergroup = (record)=>{
-        get({url:SERVER_URL+`/sys/usergroup/info/${record.ugId}`}).then(res => {
+        get({url:`/sys/usergroup/info/${record.ugId}`}).then(res => {
             if(res.code === 0){
                 this.setState({
                     showModal: true,
@@ -128,7 +124,7 @@ class UsergroupUser extends Component {
             title:`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`,
             content:'',
             onOk:()=>{
-                post({url:SERVER_URL+'/sys/usergroup/ugUser/delete',
+                post({url:'/sys/usergroup/ugUser/delete',
                     data:{ugId:this.props.match.params.ugId,userIds:ids},
                     headers:{headers: {"Content-Type": "application/json"}}
                 }).then( res => {
@@ -174,14 +170,11 @@ class UsergroupUser extends Component {
     }
 
     render() {
-        const { selectedRowKeys, needLogin } = this.state;
+        const { selectedRowKeys } = this.state;
         const rowSelection = {
             selectedRowKeys,
             onChange: this.onSelectChange,
         };
-        if(needLogin){
-            return <Redirect to="/login" />
-        }
         return (
             <div className="gutter-example">
                 <BreadcrumbCustom first="系统管理" second={<Link to={'/app/sys/usergroup'}>用户组管理</Link>} third="用户组角色管理"/>

@@ -20,7 +20,6 @@ class schedule extends Component {
             data: [],//数据
         },
         beanName: '',//查询条件
-        needLogin: false,
         showModal: false,
         editJobId: null,
         jobData: {},
@@ -39,16 +38,10 @@ class schedule extends Component {
         this.setState({ loading: true });
         const limit = num?num:this.state.queryInfo.pageSize;
 
-        get({url:SERVER_URL + '/sys/schedule/list',
+        get({url: '/sys/schedule/list',
             headers:{params:{page: page, limit: limit, beanName: this.state.beanName}}}).then(res => {
             const {code, msg, page} = res;
             if(code !== 0){
-                notification['error']({
-                    message:msg
-                });
-                this.setState({
-                    needLogin: true
-                });
                 return ;
             }
             this.setState({
@@ -184,7 +177,7 @@ class schedule extends Component {
      * 编辑定时任务
      */
     editJob = (record) => {
-        get({url:SERVER_URL+`/sys/schedule/info/${record.jobId}`}).then(res => {
+        get({url:`/sys/schedule/info/${record.jobId}`}).then(res => {
             console.log(res);
             if(res.code === 0){
                 this.setState({
@@ -202,7 +195,7 @@ class schedule extends Component {
             title:`确定对[id=${ids.join(',')}]进行[${id ? '暂停' : '批量暂停'}]操作?`,
             content:'',
             onOk:()=>{
-                post({url:SERVER_URL+'/sys/schedule/pause',
+                post({url:'/sys/schedule/pause',
                     data:ids,
                     headers:{headers: {"Content-Type": "application/json"}}
                 }).then( res => {
@@ -224,7 +217,7 @@ class schedule extends Component {
             title:`确定对[id=${ids.join(',')}]进行[${id ? '恢复' : '批量恢复'}]操作?`,
             content:'',
             onOk:()=>{
-                post({url:SERVER_URL+'/sys/schedule/resume',
+                post({url:'/sys/schedule/resume',
                     data:ids,
                     headers:{headers: {"Content-Type": "application/json"}}
                 }).then( res => {
@@ -246,7 +239,7 @@ class schedule extends Component {
             title:`确定对[id=${ids.join(',')}]进行[${id ? '立即执行' : '批量立即执行'}]操作?`,
             content:'',
             onOk:()=>{
-                post({url:SERVER_URL+'/sys/schedule/run',
+                post({url:'/sys/schedule/run',
                     data:ids,
                     headers:{headers: {"Content-Type": "application/json"}}
                 }).then( res => {
@@ -270,7 +263,7 @@ class schedule extends Component {
             title:`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`,
             content:'',
             onOk:()=>{
-                post({url:SERVER_URL+'/sys/schedule/delete',
+                post({url:'/sys/schedule/delete',
                     data:ids,
                     headers:{headers: {"Content-Type": "application/json"}}
                 }).then( res => {
@@ -298,14 +291,11 @@ class schedule extends Component {
     }
 
     render() {
-        const { selectedRowKeys, needLogin } = this.state;
+        const { selectedRowKeys } = this.state;
         const rowSelection = {
             selectedRowKeys,
             onChange: this.onSelectChange,
         };
-        if(needLogin){
-            return <Redirect to="/login" />
-        }
         return (
             <div className="gutter-example">
                 <BreadcrumbCustom first="系统管理" second="定时任务" />

@@ -19,7 +19,6 @@ class oss extends Component {
             count: 0,//一共几条数据
             data: [],//数据
         },
-        needLogin: false,
         showConfig: false,
         showUpload: false,
     };
@@ -36,16 +35,10 @@ class oss extends Component {
         this.setState({ loading: true });
         const limit = num?num:this.state.queryInfo.pageSize;
 
-        get({url:SERVER_URL + '/sys/oss/list',
+        get({url: '/sys/oss/list',
             headers:{params:{page: page, limit: limit, username: this.state.username}}}).then(res => {
             const {code, msg, page} = res;
             if(code !== 0){
-                notification['error']({
-                    message:msg
-                });
-                this.setState({
-                    needLogin: true
-                });
                 return ;
             }
             this.setState({
@@ -107,7 +100,7 @@ class oss extends Component {
             title:`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`,
             content:'',
             onOk:()=>{
-                post({url:SERVER_URL+'/sys/oss/delete',
+                post({url:'/sys/oss/delete',
                     data:ids,
                     headers:{headers: {"Content-Type": "application/json"}}
                 }).then( res => {
@@ -147,14 +140,11 @@ class oss extends Component {
     }
 
     render() {
-        const { selectedRowKeys, needLogin } = this.state;
+        const { selectedRowKeys } = this.state;
         const rowSelection = {
             selectedRowKeys,
             onChange: this.onSelectChange,
         };
-        if(needLogin){
-            return <Redirect to="/login" />
-        }
         return (
             <div className="gutter-example">
                 <BreadcrumbCustom first="系统管理" second="文件上传" />

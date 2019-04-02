@@ -14,7 +14,7 @@ class DeptAddOrUpdate extends Component {
 
     componentDidMount(){
         isAuth('sys:dept:select') &&(
-            get({url:SERVER_URL+'/sys/dept/select'}).then(res => {
+            get({url:'/sys/dept/select'}).then(res => {
                 const data = treeDataTranslate(res.deptList, 'deptId');
                 this.setState({
                     treeData: data,
@@ -29,7 +29,7 @@ class DeptAddOrUpdate extends Component {
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 values.deptId = deptId;
-                post({url:SERVER_URL+`/sys/dept/${!deptId ? 'save' : 'update'}`,
+                post({url:`/sys/dept/${!deptId ? 'save' : 'update'}`,
                     data:values
                 }).then(res =>{
                     if(res.code === 0) {

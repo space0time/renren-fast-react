@@ -17,7 +17,7 @@ class MenuAddOrUpdate extends Component{
 
     componentDidMount(){
         isAuth('sys:menu:select') &&(
-        get({url:SERVER_URL+'/sys/menu/select'}).then(res => {
+        get({url:'/sys/menu/select'}).then(res => {
             const data = treeDataTranslate(res.menuList, 'menuId');
             this.setState({
                 treeData: data,
@@ -32,7 +32,7 @@ class MenuAddOrUpdate extends Component{
             if (!err) {
                 console.log(values);
                 values.menuId = menuId;
-                post({url:SERVER_URL+`/sys/menu/${!menuId ? 'save' : 'update'}`,
+                post({url:`/sys/menu/${!menuId ? 'save' : 'update'}`,
                     data:values
                 }).then(res =>{
                     if(res.code === 0) {

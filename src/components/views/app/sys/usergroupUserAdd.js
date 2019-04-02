@@ -30,7 +30,7 @@ class UsergourpUserAdd extends Component {
     }
 
     componentDidMount(){
-        get({url:SERVER_URL+'/sys/dept/list'}).then(res => {
+        get({url:'/sys/dept/list'}).then(res => {
             const data = treeDataTranslate(res, 'deptId');
             this.setState({
                 treeData: data,
@@ -49,7 +49,7 @@ class UsergourpUserAdd extends Component {
 
     handleOk = ()=>{
         const data = this.state.user.selectedRowKeys.map(key=>{return {ugId:this.props.ugId,userId:key}})
-        post({url:SERVER_URL+'/sys/usergroup/ugUser/save',
+        post({url:'/sys/usergroup/ugUser/save',
             data,
             headers:{headers: {"Content-Type": "application/json"}}
         }).then( res => {
@@ -139,7 +139,7 @@ class UsergourpUserAdd extends Component {
 
         const limit = num?num:this.state.user.queryInfo.pageSize;
 
-        get({url:SERVER_URL + '/sys/usergroup/userList',
+        get({url: '/sys/usergroup/userList',
             headers:{params:{page: page, limit: limit, ugId:this.props.ugId, deptId:this.state.treeSelect}}}).then(res => {
             const {code, msg, page} = res;
             if(code !== 0){

@@ -21,7 +21,7 @@ class Menu extends Component {
     }
 
     getData = ()=>{
-        get({url:SERVER_URL+'/sys/menu/list'}).then(res => {
+        get({url:'/sys/menu/list'}).then(res => {
             const data = treeDataTranslate(res, 'menuId');
             this.setState({
                 treeData: data,
@@ -125,7 +125,7 @@ class Menu extends Component {
             title:`确认删除${typeName + name}?`,
             content:'',
             onOk:()=>{
-                post({url:SERVER_URL+`/sys/menu/delete/${menuId}`,
+                post({url:`/sys/menu/delete/${menuId}`,
                     headers:{headers: {"Content-Type": "application/json"}}
                 }).then( res => {
                     const {code, msg} = res;

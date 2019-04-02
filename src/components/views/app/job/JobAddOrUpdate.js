@@ -15,7 +15,7 @@ class JobAddOrUpdate extends Component{
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 values.jobId=jobId;
-                post({url:SERVER_URL+`/sys/schedule/${!jobId ? 'save' : 'update'}`,
+                post({url:`/sys/schedule/${!jobId ? 'save' : 'update'}`,
                     data:{...jobData, ...values}
                 }).then(res =>{
                     if(res.code === 0) {

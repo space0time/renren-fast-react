@@ -70,7 +70,7 @@ class Login extends React.Component {
                 <div className="login-form" >
                     <div className="login-logo">
                         <span>React Admin</span>
-                        <PwaInstaller />
+                        {/*<PwaInstaller />*/}
                     </div>
                     <Form onSubmit={this.handleSubmit} style={{maxWidth: '300px'}}>
                         <FormItem>
@@ -123,7 +123,7 @@ const mapStateToPorps = state => {
     const defaultLogin = {data:{}};
     const defaultGetMenu = {data:{}};
     const defaultUserInfo = {data:{}};
-    const { login=defaultLogin,getMenu=defaultGetMenu, userInfo=defaultUserInfo} = state.httpData;
+    const { login=defaultLogin, getMenu=defaultGetMenu, userInfo=defaultUserInfo} = state.httpData;
     return { auth : {data:{
                         ...userInfo.data.user,
                         permissions:getMenu.data.permissions,

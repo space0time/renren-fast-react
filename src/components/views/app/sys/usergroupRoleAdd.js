@@ -30,7 +30,7 @@ class UsergourpRoleAdd extends Component {
     }
 
     componentDidMount(){
-        get({url:SERVER_URL+'/sys/dept/list'}).then(res => {
+        get({url:'/sys/dept/list'}).then(res => {
             const data = treeDataTranslate(res, 'deptId');
             this.setState({
                 treeData: data,
@@ -49,7 +49,7 @@ class UsergourpRoleAdd extends Component {
 
     handleOk = ()=>{
         const data = this.state.role.selectedRowKeys.map(key=>{return {ugId:this.props.ugId,roleId:key}})
-        post({url:SERVER_URL+'/sys/usergroup/ugRole/save',
+        post({url:'/sys/usergroup/ugRole/save',
             data,
             headers:{headers: {"Content-Type": "application/json"}}
         }).then( res => {
@@ -139,7 +139,7 @@ class UsergourpRoleAdd extends Component {
 
         const limit = num?num:this.state.role.queryInfo.pageSize;
 
-        get({url:SERVER_URL + '/sys/usergroup/roleList',
+        get({url: '/sys/usergroup/roleList',
             headers:{params:{page: page, limit: limit, ugId:this.props.ugId, deptId:this.state.treeSelect}}}).then(res => {
             const {code, msg, page} = res;
             if(code !== 0){

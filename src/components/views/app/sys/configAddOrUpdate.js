@@ -15,7 +15,7 @@ class ConfigAddOrUpdate extends Component {
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 values.id=id;
-                post({url:SERVER_URL+`/sys/config/${!id ? 'save' : 'update'}`,
+                post({url:`/sys/config/${!id ? 'save' : 'update'}`,
                     data:values
                 }).then(res =>{
                     if(res.code === 0) {

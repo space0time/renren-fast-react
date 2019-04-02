@@ -73,16 +73,10 @@ class scheduleLogList extends Component{
         this.setState({ loading: true });
         const limit = num?num:this.state.queryInfo.pageSize;
 
-        get({url:SERVER_URL + '/sys/scheduleLog/list',
+        get({url: '/sys/scheduleLog/list',
             headers:{params:{page: page, limit: limit, jobId: this.state.jobId}}}).then(res => {
             const {code, msg, page} = res;
             if(code !== 0){
-                notification['error']({
-                    message:msg
-                });
-                this.setState({
-                    needLogin: true
-                });
                 return ;
             }
             this.setState({

@@ -10,7 +10,7 @@ class ossUpload extends React.Component {
 
     componentDidMount(){
         this.setState({
-            uploadUrl: SERVER_URL+`/sys/oss/upload?token=${sessionStorage.getItem('token')}`
+            uploadUrl: `/sys/oss/upload?token=${sessionStorage.getItem('token')}`
         });
     }
 

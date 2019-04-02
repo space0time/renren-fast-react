@@ -23,7 +23,6 @@ class usergroup extends Component {
             data: [],//数据
         },
         ugName: '',//查询条件
-        needLogin: false,
         showModal: false,
         editUgId: null,
         usergroupData: {},
@@ -42,15 +41,12 @@ class usergroup extends Component {
         this.setState({ selectedRowKeys: [],loading: true });
         const limit = num?num:this.state.queryInfo.pageSize;
 
-        get({url:SERVER_URL + '/sys/usergroup/list',
+        get({url: '/sys/usergroup/list',
             headers:{params:{page: page, limit: limit, ugName: this.state.ugName}}}).then(res => {
             const {code, msg, page} = res;
             if(code !== 0){
                 notification['error']({
                     message:msg
-                });
-                this.setState({
-                    needLogin: true
                 });
                 return ;
             }
@@ -124,7 +120,7 @@ class usergroup extends Component {
     }
 
     editUsergroup = (record)=>{
-        get({url:SERVER_URL+`/sys/usergroup/info/${record.ugId}`}).then(res => {
+        get({url:`/sys/usergroup/info/${record.ugId}`}).then(res => {
             if(res.code === 0){
                 this.setState({
                     showModal: true,
@@ -141,7 +137,7 @@ class usergroup extends Component {
             title:`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`,
             content:'',
             onOk:()=>{
-                post({url:SERVER_URL+'/sys/usergroup/delete',
+                post({url:'/sys/usergroup/delete',
                     data:ids,
                     headers:{headers: {"Content-Type": "application/json"}}
                 }).then( res => {
@@ -193,14 +189,11 @@ class usergroup extends Component {
     }
 
     render() {
-        const { selectedRowKeys, needLogin } = this.state;
+        const { selectedRowKeys } = this.state;
         const rowSelection = {
             selectedRowKeys,
             onChange: this.onSelectChange,
         };
-        if(needLogin){
-            return <Redirect to="/login" />
-        }
         return (
 
             <Switch>

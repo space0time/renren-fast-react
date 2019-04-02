@@ -10,7 +10,7 @@ class OssConfig extends Component {
 
     componentDidMount(){
 
-        get({url:SERVER_URL+'/sys/oss/config'}).then(res=>{
+        get({url:'/sys/oss/config'}).then(res=>{
             const {code, config} = res;
             if(code === 0){
                  this.props.form.setFieldsValue(config);
@@ -23,7 +23,7 @@ class OssConfig extends Component {
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 console.log(values);
-                post({url:SERVER_URL+`/sys/oss/saveConfig`,
+                post({url:`/sys/oss/saveConfig`,
                     data:values
                 }).then(res =>{
                     if(res.code === 0) {

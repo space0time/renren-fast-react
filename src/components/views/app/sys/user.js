@@ -4,7 +4,6 @@ import {Button, Card, Col, Input, Modal, notification, Row, Table, Tag} from "an
 import {Redirect} from "react-router-dom";
 import UserAddOrUpdate from "./userAddOrUpdate";
 import {get, post} from '@/axios/tools'
-import {SERVER_URL} from '@/axios/config'
 import {isAuth} from '@/utils'
 
 class sysUser extends Component {
@@ -19,7 +18,6 @@ class sysUser extends Component {
             data: [],//数据
         },
         username: '',//查询条件
-        needLogin: false,
         showModal: false,
         editUserId: null,
         userData: {},
@@ -28,7 +26,7 @@ class sysUser extends Component {
     componentDidMount() {
         this.start();
 
-        get({url:SERVER_URL+'/sys/role/select'}).then(res=>{
+        get({url:'/sys/role/select'}).then(res=>{
             if(res.code === 0){
                 this.setState({
                     roleList:res.list
@@ -46,16 +44,10 @@ class sysUser extends Component {
         this.setState({ loading: true });
         const limit = num?num:this.state.queryInfo.pageSize;
 
-        get({url:SERVER_URL + '/sys/user/list',
+        get({url:'/sys/user/list',
             headers:{params:{page: page, limit: limit, username: this.state.username}}}).then(res => {
             const {code, msg, page} = res;
             if(code !== 0){
-                notification['error']({
-                    message:msg
-                });
-                this.setState({
-                    needLogin: true
-                });
                 return ;
             }
             this.setState({
@@ -185,7 +177,7 @@ class sysUser extends Component {
      * 编辑用户
      */
     editUser = (record) => {
-        get({url:SERVER_URL+`/sys/user/info/${record.userId}`}).then(res => {
+        get({url:`/sys/user/info/${record.userId}`}).then(res => {
             if(res.code === 0){
                 delete res.user.password;
                 this.setState({
@@ -205,7 +197,7 @@ class sysUser extends Component {
             title:`确认删除用户${record.username}?`,
             content:'',
             onOk:()=>{
-                post({url:SERVER_URL+'/sys/user/delete',
+                post({url:'/sys/user/delete',
                     data:[record.userId],
                     headers:{headers: {"Content-Type": "application/json"}}
                 }).then( res => {
@@ -228,7 +220,7 @@ class sysUser extends Component {
         Modal.confirm({
             title:`确认删除选择的用户?`,
             onOk:()=>{
-                post({url:SERVER_URL+'/sys/user/delete',
+                post({url:'/sys/user/delete',
                     data:this.state.selectedRowKeys,
                     headers:{headers: {"Content-Type": "application/json"}}
                 }).then( res => {
@@ -246,14 +238,11 @@ class sysUser extends Component {
 
 
     render() {
-        const { selectedRowKeys, needLogin } = this.state;
+        const { selectedRowKeys } = this.state;
         const rowSelection = {
             selectedRowKeys,
             onChange: this.onSelectChange,
         };
-        if(needLogin){
-            return <Redirect to="/login" />
-        }
         return (
             <div className="gutter-example">
                 <BreadcrumbCustom first="系统管理" second="管理员列表" />

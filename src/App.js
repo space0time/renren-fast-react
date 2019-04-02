@@ -86,7 +86,7 @@ class App extends Component {
                 <ThemePicker />
                 <Layout style={{flexDirection: 'column'}}>
                     <HeaderCustom toggle={this.toggle} collapsed={this.state.collapsed} user={user.data || {}} />
-                    <Content style={{ margin: '0 16px', overflow: 'initial', flex: '1 1 0' }}>
+                    <Content style={{ margin: '0 16px', overflow: 'auto', flex: '1 1 0' }}>
                         <Routes menuList={menuList} permissions={permissions} />
                     </Content>
                     <Footer style={{ textAlign: 'center' }}>

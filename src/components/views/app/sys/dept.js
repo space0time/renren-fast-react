@@ -20,7 +20,7 @@ class Dept extends Component {
     }
 
     getData = ()=>{
-        get({url:SERVER_URL+'/sys/dept/list'}).then(res => {
+        get({url:'/sys/dept/list'}).then(res => {
             const data = treeDataTranslate(res, 'deptId');
             this.setState({
                 treeData: data,
@@ -90,7 +90,7 @@ class Dept extends Component {
             title:`确认删除${name}?`,
             content:'',
             onOk:()=>{
-                post({url:SERVER_URL+`/sys/dept/delete/${deptId}`,
+                post({url:`/sys/dept/delete/${deptId}`,
                     headers:{headers: {"Content-Type": "application/json"}}
                 }).then( res => {
                     const {code, msg} = res;

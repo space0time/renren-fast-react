@@ -14,7 +14,7 @@ class UsergroupAddOrUpdate extends Component {
 
     componentDidMount(){
         isAuth('sys:dept:list') &&(
-            get({url:SERVER_URL+'/sys/dept/list'}).then(res => {
+            get({url:'/sys/dept/list'}).then(res => {
                 const data = treeDataTranslate(res, 'deptId');
                 this.setState({
                     treeData: data,
@@ -29,7 +29,7 @@ class UsergroupAddOrUpdate extends Component {
             if (!err) {
                 values.ugId=ugId;
                 console.log('Received values of form: ', values);
-                post({url:SERVER_URL+`/sys/usergroup/${!ugId ? 'save' : 'update'}`,
+                post({url:`/sys/usergroup/${!ugId ? 'save' : 'update'}`,
                     data:values
                 }).then(res =>{
                     if(res.code === 0) {

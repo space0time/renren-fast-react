@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {Checkbox, Form, Input, Modal, Radio, TreeSelect} from "antd";
 import { get,post } from '@/axios/tools'
-import {SERVER_URL} from '@/axios/config'
 import {isAuth, treeDataTranslate } from '@/utils'
 
 
@@ -15,7 +14,7 @@ class UserAddOrUpdate extends Component {
 
     componentDidMount(){
         isAuth('sys:dept:list') &&(
-            get({url:SERVER_URL+'/sys/dept/list'}).then(res => {
+            get({url:'/sys/dept/list'}).then(res => {
                 const data = treeDataTranslate(res, 'deptId');
                 this.setState({
                     treeData: data,
@@ -32,7 +31,7 @@ class UserAddOrUpdate extends Component {
                 values.userId=userId;
                 values.salt=this.props.userData.salt;
                 console.log('Received values of form: ', values);
-                post({url:SERVER_URL+`/sys/user/${!userId ? 'save' : 'update'}`,
+                post({url:`/sys/user/${!userId ? 'save' : 'update'}`,
                     data:values
                 }).then(res =>{
                     if(res.code === 0) {

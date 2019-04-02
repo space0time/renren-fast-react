@@ -20,7 +20,6 @@ class Config extends Component {
             data: [],//数据
         },
         paramKey: '',//查询条件
-        needLogin: false,
         showModal: false,
         editConfigId: null,
         configData: {},
@@ -38,15 +37,12 @@ class Config extends Component {
         this.setState({ loading: true });
         const limit = num?num:this.state.queryInfo.pageSize;
 
-        get({url:SERVER_URL + '/sys/config/list',
+        get({url: '/sys/config/list',
             headers:{params:{page: page, limit: limit, paramKey: this.state.paramKey}}}).then(res => {
             const {code, msg, page} = res;
             if(code !== 0){
                 notification['error']({
                     message:msg
-                });
-                this.setState({
-                    needLogin: true
                 });
                 return ;
             }
@@ -171,7 +167,7 @@ class Config extends Component {
             title:`确认删除参数${record.paramKey}?`,
             content:'',
             onOk:()=>{
-                post({url:SERVER_URL+'/sys/config/delete',
+                post({url:'/sys/config/delete',
                     data:[record.id],
                     headers:{headers: {"Content-Type": "application/json"}}
                 }).then( res => {
@@ -194,7 +190,7 @@ class Config extends Component {
         Modal.confirm({
             title:`确认删除选择的用户?`,
             onOk:()=>{
-                post({url:SERVER_URL+'/sys/config/delete',
+                post({url:'/sys/config/delete',
                     data:this.state.selectedRowKeys,
                     headers:{headers: {"Content-Type": "application/json"}}
                 }).then( res => {
@@ -212,14 +208,11 @@ class Config extends Component {
 
 
     render() {
-        const { selectedRowKeys, needLogin } = this.state;
+        const { selectedRowKeys } = this.state;
         const rowSelection = {
             selectedRowKeys,
             onChange: this.onSelectChange,
         };
-        if(needLogin){
-            return <Redirect to="/login" />
-        }
         return (
             <div className="gutter-example">
                 <BreadcrumbCustom first="系统管理" second="参数管理" />
